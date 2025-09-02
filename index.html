@@ -13,10 +13,7 @@
         color: #111827;
         text-align: center;
       }
-      h1 {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-      }
+      h1 { font-size: 2rem; margin-bottom: 1rem; }
       img.logo {
         max-width: 100%;
         height: auto;
@@ -24,10 +21,7 @@
         box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         margin: 1.5rem 0;
       }
-      p {
-        max-width: 600px;
-        margin: 0 auto;
-      }
+      p { max-width: 600px; margin: 0 auto; }
 
       /* --- Webhook widget (bottom-left) --- */
       .webhook-fab {
@@ -47,7 +41,7 @@
       .webhook-btn {
         appearance: none;
         border: 0;
-        background: #3b82f6; /* blue-500 */
+        background: #3b82f6;
         color: #0b1220;
         font-weight: 700;
         padding: 10px 14px;
@@ -91,15 +85,15 @@
     <elevenlabs-convai agent-id="agent_2501k3v11788e6w908yswfp1w66z"></elevenlabs-convai>
     <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 
-    <!-- Webhook widget: set your webhook URL/method/token here via data-* attributes -->
+    <!-- Webhook widget -->
     <div
       id="le-webhook-widget"
       class="webhook-fab"
-      data-url="https://leonard-dev.app.n8n.cloud/webhook/luke-pre-brief"   <!-- ← CHANGE THIS -->
-      data-method="POST"                        <!-- POST or GET -->
-      data-token=""                             <!-- optional: sent as X-Webhook-Token -->
+      data-url="https://leonard-dev.app.n8n.cloud/webhook/luke-pre-brief"  <!-- your n8n webhook -->
+      data-method="POST"                                                   <!-- POST or GET -->
+      data-token=""                                                        <!-- optional: sent as X-Webhook-Token -->
     >
-      <button id="le-webhook-btn" class="webhook-btn">Test n8n Flow</button>
+      <button id="le-webhook-btn" class="webhook-btn">test n8n</button>
       <a id="le-webhook-link" class="webhook-link" target="_blank" rel="noopener">GET link</a>
     </div>
     <div id="le-webhook-log" class="webhook-log" aria-live="polite"></div>
@@ -111,9 +105,8 @@
         const link = document.getElementById('le-webhook-link');
         const log = document.getElementById('le-webhook-log');
 
-        // Configure defaults and read from data-* attributes
         const config = {
-          url: widget?.dataset.url || 'https://example.com/webhook',
+          url: widget?.dataset.url || '',
           method: (widget?.dataset.method || 'POST').toUpperCase(),
           token: widget?.dataset.token || '',
           getParams: { clicked: 'true', source: 'github-pages' },
@@ -163,7 +156,8 @@
             const text = await res.text();
             showLog(`Status: ${res.status} ${res.statusText}\n\n${text}`, res.ok ? 'success' : 'error');
           } catch (err) {
-            showLog(`Request failed (likely CORS on receiver):\n\n${err}`, 'error');
+            // Most common: CORS on the receiver blocks browser calls
+            showLog(`Request failed (likely CORS on receiver). If this is an n8n Webhook, add CORS headers in your response (e.g., via an HTTP Response node) or call via a tiny proxy.\n\n${err}`, 'error');
           } finally {
             btn.disabled = false;
           }
